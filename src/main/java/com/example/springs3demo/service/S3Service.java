@@ -28,12 +28,16 @@ public class S3Service implements FileServiceImpl{
     @Override
     public String saveFile(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
-        try {
-            File file1 = convertMultiPartToFile(file);
-            PutObjectResult putObjectResult = s3.putObject(bucketName, originalFilename, file1);
-            return putObjectResult.getContentMd5();
-        } catch (IOException e) {
-            throw  new RuntimeException(e);
+        int count = 0;
+        int maxTries = 3;
+        while(true) {
+            try {
+                File file1 = convertMultiPartToFile(file);
+                PutObjectResult putObjectResult = s3.putObject(bucketName, originalFilename, file1);
+                return putObjectResult.getContentMd5();
+            } catch (IOException e) {
+                if (++count == maxTries) throw new RuntimeException(e);
+            }
         }
 
     }
