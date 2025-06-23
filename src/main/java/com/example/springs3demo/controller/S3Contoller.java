@@ -16,32 +16,30 @@ import static java.net.HttpURLConnection.HTTP_OK;
 @RestController
 public class S3Contoller {
 
-
     @Autowired
     private S3Service s3Service;;
 
     @PostMapping("upload")
-    public String upload(@RequestParam("file") MultipartFile file){
-       return s3Service.saveFile(file);
+    public String upload(@RequestParam("file") MultipartFile file) {
+        return s3Service.saveFile(file);
     }
 
     @GetMapping("download/{filename}")
-    public ResponseEntity<byte[]> download(@PathVariable("filename") String filename){
-        HttpHeaders headers=new HttpHeaders();
+    public ResponseEntity<byte[]> download(@PathVariable("filename") String filename) {
+        HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", MediaType.ALL_VALUE);
-        headers.add("Content-Disposition", "attachment; filename="+filename);
+        headers.add("Content-Disposition", "attachment; filename=" + filename);
         byte[] bytes = s3Service.downloadFile(filename);
-        return  ResponseEntity.status(HTTP_OK).headers(headers).body(bytes);
+        return ResponseEntity.status(HTTP_OK).headers(headers).body(bytes);
     }
 
-
     @DeleteMapping("{filename}")
-    public  String deleteFile(@PathVariable("filename") String filename){
-       return s3Service.deleteFile(filename);
+    public String deleteFile(@PathVariable("filename") String filename) {
+        return s3Service.deleteFile(filename);
     }
 
     @GetMapping("list")
-    public List<String> getAllFiles(){
+    public List<String> getAllFiles() {
 
         return s3Service.listAllFiles();
 
