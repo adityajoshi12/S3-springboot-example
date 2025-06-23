@@ -25,3 +25,16 @@ jobs:
 
         - name: Build with maven
           run: mvn clean install
+
+        - name: Log in to GitHub Container Registry
+          run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+        - name: Build Docker image
+          run: |
+            REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+            docker build -t ghcr.io/$REPO_NAME/spring-s3-demo:latest .
+
+        - name: Push Docker image
+          run: |
+            REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+            docker push ghcr.io/$REPO_NAME/spring-s3-demo:latest
